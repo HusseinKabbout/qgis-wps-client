@@ -1,7 +1,6 @@
 from sextante.gui.ToolboxAction import ToolboxAction
 from sextante.core.Sextante import Sextante
 from WpsAlgorithm import WpsAlgorithm
-from PyQt4.QtCore import *
 
 
 class WpsServerAction(ToolboxAction):

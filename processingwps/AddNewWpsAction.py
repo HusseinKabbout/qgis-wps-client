@@ -1,8 +1,8 @@
 from processing.gui.ToolboxAction import ToolboxAction
 from processing.core.Processing import Processing
 import os
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtCore import *
 
 
 class AddNewWpsAction(ToolboxAction):
@@ -15,7 +15,7 @@ class AddNewWpsAction(ToolboxAction):
             "bookmarksChanged()"), Processing.updateAlgsList)
 
     def getIcon(self):
-        return QtGui.QIcon(os.path.dirname(__file__) + "/../images/script.png")
+        return QIcon(os.path.dirname(__file__) + "/../images/script.png")
 
     def execute(self):
         self.wpsDockWidget.on_btnConnect_clicked()

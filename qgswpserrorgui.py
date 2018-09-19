@@ -4,8 +4,9 @@
 Module implementing ErrorGUI.
 """
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtWidgets import *
 
 from Ui_qgswpserrorgui import Ui_Dialog
 

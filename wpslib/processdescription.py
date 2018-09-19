@@ -17,10 +17,11 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtNetwork import *
-from PyQt4.QtGui import QApplication, QMessageBox
-from PyQt4 import QtXml
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtNetwork import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt import *
 from qgis.core import QgsNetworkAccessManager
 from wpsserver import WpsServer
 from collections import namedtuple

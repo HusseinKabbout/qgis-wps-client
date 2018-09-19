@@ -17,11 +17,12 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtNetwork import *
-from PyQt4.QtGui import QApplication, QMessageBox
-from PyQt4 import QtXml
-from PyQt4.QtXmlPatterns import QXmlQuery
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtNetwork import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt import *
+from qgis.PyQt.QtXmlPatterns import *
 from qgis.core import QgsNetworkAccessManager
 from functools import partial
 from wps.wpslib.processdescription import getFileExtension

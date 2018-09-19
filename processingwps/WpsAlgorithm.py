@@ -16,9 +16,9 @@ from wps.wpslib.processdescription import *
 from wps.wpslib.executionrequest import ExecutionRequest
 from wps.wpslib.executionrequest import createTmpGML
 from wps.wpslib.executionresult import ExecutionResult
-from PyQt4 import QtGui
-from PyQt4.QtCore import *
-from PyQt4.QtGui import qApp, QMessageBox
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
 import os
 
 
@@ -39,7 +39,7 @@ class WpsAlgorithm(GeoAlgorithm):
         self.buildParametersDialog()
 
     def getIcon(self):
-        return QtGui.QIcon(os.path.dirname(__file__) + "/../images/wps.png")
+        return QIcon(os.path.dirname(__file__) + "/../images/wps.png")
 
     @staticmethod
     def groupName(server):

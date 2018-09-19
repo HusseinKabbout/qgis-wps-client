@@ -17,8 +17,8 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtCore import QSettings, QObject, QDateTime
-from PyQt4.QtNetwork import QNetworkCookie
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtNetwork import *
 
 
 class WpsServerCookie(QObject):

@@ -7,7 +7,7 @@ from WpsServerAction import WpsServerAction
 from wps.wpslib.wpsserver import WpsServer
 from wps.wpslib.processdescription import ProcessDescription
 import os
-from PyQt4 import QtGui
+from qgis.PyQt.QtGui import *
 
 
 class WpsAlgorithmProvider(AlgorithmProvider):
@@ -54,7 +54,7 @@ class WpsAlgorithmProvider(AlgorithmProvider):
         return ["tif"]
 
     def getIcon(self):
-        return QtGui.QIcon(os.path.dirname(__file__) + "/../images/wps.png")
+        return QIcon(os.path.dirname(__file__) + "/../images/wps.png")
 
     def _serversAlgsList(self):
         algs = []

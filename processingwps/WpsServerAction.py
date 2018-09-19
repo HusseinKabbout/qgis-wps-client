@@ -1,6 +1,6 @@
 from processing.gui.ToolboxAction import ToolboxAction
 from WpsAlgorithm import WpsAlgorithm
-from PyQt4.QtCore import *
+from qgis.PyQt.QtCore import *
 
 
 class WpsServerAction(ToolboxAction):

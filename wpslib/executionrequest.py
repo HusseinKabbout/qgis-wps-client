@@ -17,12 +17,15 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtCore import *
-from PyQt4 import QtXml
-from PyQt4.QtGui import QApplication, QMessageBox
-from PyQt4.QtSql import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtSql import *
 from qgis.core import QgsVectorFileWriter, QgsDataSourceURI
-import os, sys, string, tempfile, base64
+import os
+import tempfile
+import base64
 import cgi
 
 

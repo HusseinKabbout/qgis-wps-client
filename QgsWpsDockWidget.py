@@ -17,10 +17,11 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from PyQt4 import QtXml
-from PyQt4.QtNetwork import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt import QtXml
+from qgis.PyQt.QtNetwork import *
 from qgis.core import *
 from . import version
 from qgswpsgui import QgsWpsGui

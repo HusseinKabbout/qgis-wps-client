@@ -18,9 +18,10 @@ email                : geotux_tuxman@linuxmail.org
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import QColor, QMessageBox
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkAccessManager
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
+from qgis.PyQt.QtNetwork import *
 from qgis.core import *
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
@@ -28,7 +29,6 @@ from wpslib.processdescription import getFileExtension, isMimeTypeVector, isMime
 from wpslib.executionresult import decodeBase64
 
 from functools import partial
-import apicompat
 import tempfile
 import os
 import platform

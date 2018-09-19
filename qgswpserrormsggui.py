@@ -17,7 +17,7 @@
   ***************************************************************************/
 """
 
-from PyQt4.QtGui import QDialog
+from qgos.PyQt.QtWidgets import *
 from wps import version
 
 from Ui_qgswpserrormsggui import Ui_Dialog
