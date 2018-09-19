@@ -4,11 +4,12 @@ import os
 from PyQt4 import QtGui
 from PyQt4.QtCore import *
 
+
 class AddNewWpsAction(ToolboxAction):
 
     def __init__(self, wpsDockWidget):
-        self.name="Connect to WPS servers"
-        self.group="Tools"
+        self.name = "Connect to WPS servers"
+        self.group = "Tools"
         self.wpsDockWidget = wpsDockWidget
         wpsDockWidget.bookmarksChanged.connect(Sextante.updateAlgsList)
 

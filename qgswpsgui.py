@@ -27,154 +27,151 @@ from qgswpsbookmarks import Bookmarks
 from doAbout import DlgAbout
 
 
-import os, sys, string,  apicompat
-
 class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
-  MSG_BOX_TITLE = "WPS"
-  getDescription = pyqtSignal(str,  QTreeWidgetItem)  
-  newServer = pyqtSignal()  
-  editServer = pyqtSignal(str)  
-  deleteServer = pyqtSignal(str)          
-  connectServer = pyqtSignal(list)   
-  pushDefaultWPSServer = pyqtSignal(str)   
-  requestDescribeProcess = pyqtSignal(str,  str)  
-  
-  
-  def __init__(self, parent, fl):
-    QDialog.__init__(self, parent, fl)
-    self.setupUi(self)
-    self.fl = fl
-    self.setWindowTitle('QGIS WPS-Client '+version())
-    self.dlgAbout = DlgAbout(parent)
-    self.filterText = ''
-    self.lneFilter.setText('')
-   
-  def initQgsWpsGui(self):    
-##    self.btnOk.setEnabled(False)
-    self.btnConnect.setEnabled(False)
-    settings = QSettings()
-    settings.beginGroup("WPS")
-    connections = settings.childGroups()
-    self.cmbConnections.clear()
-    self.cmbConnections.addItems(connections)
-    self.treeWidget.clear()
-    
-    if self.cmbConnections.size() > 0:
-      self.btnConnect.setEnabled(True)
-      self.btnEdit.setEnabled(True)
-      self.btnDelete.setEnabled(True)
+    MSG_BOX_TITLE = "WPS"
+    getDescription = pyqtSignal(str, QTreeWidgetItem)
+    newServer = pyqtSignal()
+    editServer = pyqtSignal(str)
+    deleteServer = pyqtSignal(str)
+    connectServer = pyqtSignal(list)
+    pushDefaultWPSServer = pyqtSignal(str)
+    requestDescribeProcess = pyqtSignal(str, str)
 
-    try:
+    def __init__(self, parent, fl):
+        QDialog.__init__(self, parent, fl)
+        self.setupUi(self)
+        self.fl = fl
+        self.setWindowTitle('QGIS WPS-Client ' + version())
+        self.dlgAbout = DlgAbout(parent)
+        self.filterText = ''
+        self.lneFilter.setText('')
+
+    def initQgsWpsGui(self):
+        self.btnConnect.setEnabled(False)
         settings = QSettings()
-        myIndex = pyint(settings.value("WPS-lastConnection/Index",  "Index"))
-        self.cmbConnections.setCurrentIndex(myIndex)
-    except:
-        pass
+        settings.beginGroup("WPS")
+        connections = settings.childGroups()
+        self.cmbConnections.clear()
+        self.cmbConnections.addItems(connections)
+        self.treeWidget.clear()
 
-    return 1    
+        if self.cmbConnections.size() > 0:
+            self.btnConnect.setEnabled(True)
+            self.btnEdit.setEnabled(True)
+            self.btnDelete.setEnabled(True)
 
-  def getBookmark(self, item):
-      self.requestDescribeProcess.emit(item.text(0), item.text(1))
-        
-  def on_buttonBox_rejected(self):
-    self.close()
+        try:
+            settings = QSettings()
+            myIndex = pyint(settings.value("WPS-lastConnection/Index",
+                                           "Index"))
+            self.cmbConnections.setCurrentIndex(myIndex)
+        except:
+            pass
 
-  # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
-  # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
-  @pyqtSignature("on_buttonBox_accepted()")          
-  def on_buttonBox_accepted(self):
-    if  self.treeWidget.topLevelItemCount() == 0:
-      QMessageBox.warning(None, 'WPS Warning','No Service connected!')
-    else:
-      try:
-        self.getDescription.emit(self.cmbConnections.currentText(),  self.treeWidget.currentItem() )
-      except:
-        QMessageBox.information(None, self.tr('Error'),  self.tr('Please select a process!'))
-    
-  # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
-  # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
-  @pyqtSignature("on_btnConnect_clicked()")       
-  def on_btnConnect_clicked(self):
-    self.treeWidget.clear()
-    self.filterText = ''
-    self.lneFilter.setText('')
-    selectedWPS = self.cmbConnections.currentText()
-    self.server = WpsServer.getServer(selectedWPS)
-    self.server.capabilitiesRequestFinished.connect(self.createCapabilitiesGUI)
-    self.server.requestCapabilities()
+        return 1
 
-  @pyqtSignature("on_btnBookmarks_clicked()")       
-  def on_btnBookmarks_clicked(self):    
-      self.dlgBookmarks = Bookmarks(self.fl)
-      self.dlgBookmarks.getBookmarkDescription.connect(self.getBookmark)
-#      self.dlgBookmarks.bookmarksChanged.connect(bookmarksChanged())
-      self.dlgBookmarks.show()
+    def getBookmark(self, item):
+        self.requestDescribeProcess.emit(item.text(0), item.text(1))
 
-  @pyqtSignature("on_btnNew_clicked()")       
-  def on_btnNew_clicked(self):    
-    self.newServer.emit()
-    
-  @pyqtSignature("on_btnEdit_clicked()")       
-  def on_btnEdit_clicked(self):    
-    self.editServer.emit(self.cmbConnections.currentText())    
+    def on_buttonBox_rejected(self):
+        self.close()
 
-  @pyqtSignature("on_cmbConnections_activated(int)")           
-  def on_cmbConnections_activated(self,  index):
-    settings = QSettings()
-    settings.setValue("WPS-lastConnection/Index", pystring(index))
-  
-  @pyqtSignature("on_btnDelete_clicked()")       
-  def on_btnDelete_clicked(self):    
-    self.deleteServer.emit(self.cmbConnections.currentText())    
-
-  def initTreeWPSServices(self, taglist):
-    self.treeWidget.clear()
-    self.treeWidget.setColumnCount(self.treeWidget.columnCount())
-    itemList = []
-    
-    for items in taglist:
-
-        if self.filterText == '':
-            item = QTreeWidgetItem()
-            ident = pystring(items[0])
-            title = pystring(items[1])
-            abstract = pystring(items[2])
-            item.setText(0,ident.strip())
-            item.setText(1,title.strip())  
-            item.setText(2,abstract.strip())  
-            itemList.append(item)
+    # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
+    # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
+    @pyqtSignature("on_buttonBox_accepted()")
+    def on_buttonBox_accepted(self):
+        if self.treeWidget.topLevelItemCount() == 0:
+            QMessageBox.warning(None, 'WPS Warning', 'No Service connected!')
         else:
-            if self.filterText in pystring(items[0]) or self.filterText in pystring(items[1]) or self.filterText in pystring(items[2]):
+            try:
+                self.getDescription.emit(self.cmbConnections.currentText(),
+                                         self.treeWidget.currentItem())
+            except:
+                QMessageBox.information(None, self.tr('Error'), self.tr(
+                    'Please select a process!'))
+
+    # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
+    # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
+    @pyqtSignature("on_btnConnect_clicked()")
+    def on_btnConnect_clicked(self):
+        self.treeWidget.clear()
+        self.filterText = ''
+        self.lneFilter.setText('')
+        selectedWPS = self.cmbConnections.currentText()
+        self.server = WpsServer.getServer(selectedWPS)
+        self.server.capabilitiesRequestFinished.connect(
+            self.createCapabilitiesGUI)
+        self.server.requestCapabilities()
+
+    @pyqtSignature("on_btnBookmarks_clicked()")
+    def on_btnBookmarks_clicked(self):
+        self.dlgBookmarks = Bookmarks(self.fl)
+        self.dlgBookmarks.getBookmarkDescription.connect(self.getBookmark)
+        #      self.dlgBookmarks.bookmarksChanged.connect(bookmarksChanged())
+        self.dlgBookmarks.show()
+
+    @pyqtSignature("on_btnNew_clicked()")
+    def on_btnNew_clicked(self):
+        self.newServer.emit()
+
+    @pyqtSignature("on_btnEdit_clicked()")
+    def on_btnEdit_clicked(self):
+        self.editServer.emit(self.cmbConnections.currentText())
+
+    @pyqtSignature("on_cmbConnections_activated(int)")
+    def on_cmbConnections_activated(self, index):
+        settings = QSettings()
+        settings.setValue("WPS-lastConnection/Index", pystring(index))
+
+    @pyqtSignature("on_btnDelete_clicked()")
+    def on_btnDelete_clicked(self):
+        self.deleteServer.emit(self.cmbConnections.currentText())
+
+    def initTreeWPSServices(self, taglist):
+        self.treeWidget.clear()
+        self.treeWidget.setColumnCount(self.treeWidget.columnCount())
+        itemList = []
+
+        for items in taglist:
+            if self.filterText == '':
                 item = QTreeWidgetItem()
                 ident = pystring(items[0])
                 title = pystring(items[1])
                 abstract = pystring(items[2])
-                item.setText(0,ident.strip())
-                item.setText(1,title.strip())  
-                item.setText(2,abstract.strip())  
+                item.setText(0, ident.strip())
+                item.setText(1, title.strip())
+                item.setText(2, abstract.strip())
                 itemList.append(item)
-    
-    self.treeWidget.addTopLevelItems(itemList)
-    
-  @pyqtSignature("on_btnAbout_clicked()")       
-  def on_btnAbout_clicked(self):
-      self.dlgAbout.show()
-      pass
-    
-  @pyqtSignature("QTreeWidgetItem*, int")
-  def on_treeWidget_itemDoubleClicked(self, item, column):
-      self.getDescription.emit(self.cmbConnections.currentText(),  self.treeWidget.currentItem() )
+            else:
+                if self.filterText in pystring(items[0]) or self.filterText in pystring(items[1]) or self.filterText in pystring(items[2]):
+                    item = QTreeWidgetItem()
+                    ident = pystring(items[0])
+                    title = pystring(items[1])
+                    abstract = pystring(items[2])
+                    item.setText(0, ident.strip())
+                    item.setText(1, title.strip())
+                    item.setText(2, abstract.strip())
+                    itemList.append(item)
 
-  def createCapabilitiesGUI(self):
-#      try:
-          self.treeWidget.clear()
-          self.itemListAll = self.server.parseCapabilitiesXML()
-          self.initTreeWPSServices(self.itemListAll)
-#      except:
-#          pass
-    
-  @pyqtSignature("QString")
-  def on_lneFilter_textChanged(self, p0):
+        self.treeWidget.addTopLevelItems(itemList)
+
+    @pyqtSignature("on_btnAbout_clicked()")
+    def on_btnAbout_clicked(self):
+        self.dlgAbout.show()
+        pass
+
+    @pyqtSignature("QTreeWidgetItem*, int")
+    def on_treeWidget_itemDoubleClicked(self, item, column):
+        self.getDescription.emit(self.cmbConnections.currentText(),
+                                 self.treeWidget.currentItem())
+
+    def createCapabilitiesGUI(self):
+        self.treeWidget.clear()
+        self.itemListAll = self.server.parseCapabilitiesXML()
+        self.initTreeWPSServices(self.itemListAll)
+
+    @pyqtSignature("QString")
+    def on_lneFilter_textChanged(self, p0):
         """
         Slot documentation goes here.
         """

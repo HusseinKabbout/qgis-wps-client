@@ -18,7 +18,8 @@
 """
 
 from PyQt4.QtCore import QSettings, QObject, QDateTime
-from PyQt4.QtNetwork import QNetworkCookie, QNetworkRequest
+from PyQt4.QtNetwork import QNetworkCookie
+
 
 class WpsServerCookie(QObject):
     def __init__(self, processUrl):
@@ -52,9 +53,11 @@ class WpsServerCookie(QObject):
             for cookie in qt_cookies:
                 if cookie.expirationDate() > QDateTime.currentDateTime():
                     if isinstance(cookie, QNetworkCookie):
-                        settings.setValue(pystring(cookie.name()), pystring(cookie.value()))
+                        settings.setValue(pystring(cookie.name()),
+                                          pystring(cookie.value()))
                     else:
-                        settings.setValue(pystring(cookie[0]), pystring(cookie[1]))
+                        settings.setValue(pystring(cookie[0]),
+                                          pystring(cookie[1]))
         settings.endGroup()
 
     # get specified cookie information in setting and contain them in the header when doing http request

@@ -9,6 +9,7 @@ from wps.wpslib.processdescription import ProcessDescription
 import os
 from PyQt4 import QtGui
 
+
 class WpsAlgorithmProvider(AlgorithmProvider):
 
     WPS_DESCRIPTIONS = "WPS_DESCRIPTIONS"
@@ -19,22 +20,25 @@ class WpsAlgorithmProvider(AlgorithmProvider):
 
     def initializeSettings(self):
         AlgorithmProvider.initializeSettings(self)
-        SextanteConfig.addSetting(Setting(self.getDescription(),
-                                          WpsAlgorithmProvider.WPS_DESCRIPTIONS,
-                                          "WPS description cache folder",
-                                          WpsAlgorithmProvider.WpsDescriptionFolder()))
+        SextanteConfig.addSetting(
+            Setting(self.getDescription(),
+                    WpsAlgorithmProvider.WPS_DESCRIPTIONS,
+                    "WPS description cache folder",
+                    WpsAlgorithmProvider.WpsDescriptionFolder()))
 
     @staticmethod
     def WpsDescriptionFolder():
-        folder = SextanteConfig.getSetting(WpsAlgorithmProvider.WPS_DESCRIPTIONS)
-        if folder == None:
+        folder = SextanteConfig.getSetting(
+            WpsAlgorithmProvider.WPS_DESCRIPTIONS)
+        if folder is None:
             folder = unicode(os.path.join(SextanteUtils.userFolder(), "wps"))
         mkdir(folder)
         return os.path.abspath(folder)
 
     def unload(self):
         AlgorithmProvider.unload(self)
-        SextanteConfig.removeSetting( WpsAlgorithmProvider.WPS_DESCRIPTIONS)
+        SextanteConfig.removeSetting(
+            WpsAlgorithmProvider.WPS_DESCRIPTIONS)
 
     def getName(self):
         return "wps"
@@ -61,19 +65,20 @@ class WpsAlgorithmProvider(AlgorithmProvider):
             else:
                 action = WpsServerAction(server)
                 self.actions.append(action)
-                dir = server.processDescriptionFolder(WpsAlgorithmProvider.WpsDescriptionFolder())
+                dir = server.processDescriptionFolder(
+                    WpsAlgorithmProvider.WpsDescriptionFolder())
                 if os.path.exists(dir):
-                    #load from descriptions
+                    # load from descriptions
                     for fn in os.listdir(dir):
                         process = ProcessDescription(server, fn)
-                        action.processalgs.append(  WpsAlgorithm(process) )
+                        action.processalgs.append(WpsAlgorithm(process))
                 algs += action.processalgs
         return algs
 
     def _bookmarkAlgsList(self):
         bookmarkAlgs = []
         for process in ProcessDescription.getBookmarks():
-            bookmarkAlgs.append( WpsAlgorithm(process, True) )
+            bookmarkAlgs.append(WpsAlgorithm(process, True))
         return bookmarkAlgs
 
     def _loadAlgorithms(self):
