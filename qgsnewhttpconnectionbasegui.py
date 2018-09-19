@@ -42,12 +42,12 @@ class QgsNewHttpConnectionBaseGui(QDialog,
         myURL = urlparse(str(self.txtUrl.text()))
         mySettings = "/WPS/" + self.txtName.text()
         #    settings.setValue("WPS/connections/selected", QVariant(name) )
-        settings.setValue(mySettings + "/scheme", pystring(myURL.scheme))
-        settings.setValue(mySettings + "/server", pystring(myURL.netloc))
-        settings.setValue(mySettings + "/path", pystring(myURL.path))
-        settings.setValue(mySettings + "/method", pystring("GET"))
-        settings.setValue(mySettings + "/version", pystring("1.0.0"))
-        settings.setValue(mySettings + "/url", pystring(
-            self.txtUrl.text()).rstrip().lstrip())
+        settings.setValue(mySettings + "/scheme", myURL.scheme)
+        settings.setValue(mySettings + "/server", myURL.netloc)
+        settings.setValue(mySettings + "/path", myURL.path)
+        settings.setValue(mySettings + "/method", "GET")
+        settings.setValue(mySettings + "/version", "1.0.0")
+        settings.setValue(mySettings + "/url",
+                          self.txtUrl.text()).rstrip().lstrip()
 
         self.parent.initQgsWpsGui()

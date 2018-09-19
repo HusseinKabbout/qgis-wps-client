@@ -114,7 +114,7 @@ class ExecutionResult(QObject):
         processUrl.removeQueryItem('Version')
         processUrl.removeQueryItem('Service')
 
-        qDebug("Post URL=" + pystring(processUrl))
+        qDebug("Post URL=" + processUrl)
 
         thePostHttp = QgsNetworkAccessManager.instance()
         request = QNetworkRequest(processUrl)
@@ -151,7 +151,7 @@ class ExecutionResult(QObject):
         if resultErrorNodeList.size() > 0:
             # for i in range(resultErrorNodeList.size()):
             #     f_element = resultErrorNodeList.at(i).toElement()
-            #     exceptionText = pystring(f_element.elementsByTagNameNS("http://www.opengis.net/ows/1.1","ExceptionText").at(0).toElement().text()).strip()
+            #     exceptionText = f_element.elementsByTagNameNS("http://www.opengis.net/ows/1.1","ExceptionText").at(0).toElement().text().strip()
             #     QMessageBox.information(None, 'Process Exception',  exceptionText)
             return self.errorHandler(resultXML)
 
@@ -162,9 +162,9 @@ class ExecutionResult(QObject):
         if resultNodeList.size() > 0:
             for i in range(resultNodeList.size()):
                 f_element = resultNodeList.at(i).toElement()
-                identifier = pystring(f_element.elementsByTagNameNS(
+                identifier = f_element.elementsByTagNameNS(
                     "http://www.opengis.net/ows/1.1", "Identifier").at(
-                        0).toElement().text()).strip()
+                        0).toElement().text().strip()
                 # Fetch the referenced complex data
                 if f_element.elementsByTagNameNS("http://www.opengis.net/wps/1.0.0", "Reference").size() > 0:
                     reference = f_element.elementsByTagNameNS("http://www.opengis.net/wps/1.0.0", "Reference").at(0).toElement()
@@ -177,15 +177,16 @@ class ExecutionResult(QObject):
                     if fileLink == '0':
                         QMessageBox.warning(
                             None, '', QApplication.translate(
-                                "QgsWps", "WPS Error: Unable to download the result of reference: ")) + pystring(fileLink)
+                                "QgsWps", "WPS Error: Unable to download the result of reference: ")) + fileLink
                         return False
 
                     # Get the mime type of the result
-                    self.mimeType = pystring(reference.attribute("mimeType", "0")).lower()
+                    self.mimeType = reference.attribute(
+                        "mimeType", "0").lower()
 
                     # Get the encoding of the result, it can be used decoding base64
-                    encoding = pystring(reference.attribute("encoding", "")).lower()
-                    schema = pystring(reference.attribute("schema", "")).lower()
+                    encoding = reference.attribute("encoding", "").lower()
+                    schema = reference.attribute("schema", "").lower()
 
                     if fileLink != '0':
                         if "playlist" in self.mimeType:  # Streaming based process?

@@ -24,9 +24,9 @@ from qgis.PyQt.QtNetwork import *
 class WpsServerCookie(QObject):
     def __init__(self, processUrl):
         QObject.__init__(self)
-        self.server = pystring(processUrl.host())
-        self.path = pystring(processUrl.path())
-        self.port = pystring(processUrl.port())
+        self.server = processUrl.host()
+        self.path = processUrl.path()
+        self.port = processUrl.port()
         self.cookieSettings = "WPS-Cookie/" + self.server + ":" + self.port + self.path
 
     # if the cookie exists, delete the old one then add, otherwise add directly
@@ -53,11 +53,11 @@ class WpsServerCookie(QObject):
             for cookie in qt_cookies:
                 if cookie.expirationDate() > QDateTime.currentDateTime():
                     if isinstance(cookie, QNetworkCookie):
-                        settings.setValue(pystring(cookie.name()),
-                                          pystring(cookie.value()))
+                        settings.setValue(cookie.name(),
+                                          cookie.value())
                     else:
-                        settings.setValue(pystring(cookie[0]),
-                                          pystring(cookie[1]))
+                        settings.setValue(cookie[0],
+                                          cookie[1])
         settings.endGroup()
 
     # get specified cookie information in setting and contain them in the header when doing http request

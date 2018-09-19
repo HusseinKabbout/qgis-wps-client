@@ -166,12 +166,12 @@ def getOwsElement(element, name):
 
 
 def getIdentifierTitleAbstractFromElement(element):
-    identifier = pystring(getOwsElement(
-        element, "Identifier").at(0).toElement().text()).strip()
-    title = pystring(getOwsElement(
-        element, "Title").at(0).toElement().text()).strip()
-    abstract = pystring(getOwsElement(
-        element, "Abstract").at(0).toElement().text()).strip()
+    identifier = getOwsElement(
+        element, "Identifier").at(0).toElement().text().strip()
+    title = getOwsElement(
+        element, "Title").at(0).toElement().text().strip()
+    abstract = getOwsElement(
+        element, "Abstract").at(0).toElement().text().strip()
     return identifier, title, abstract
 
 
@@ -195,12 +195,12 @@ def getMimeTypeSchemaEncoding(element):
     schema = ""
     encoding = ""
 #    try:
-    mimeType = pystring(element.elementsByTagName(
-        "MimeType").at(0).toElement().text()).strip().lower()
-    schema = pystring(element.elementsByTagName(
-        "Schema").at(0).toElement().text()).strip().lower()
-    encoding = pystring(element.elementsByTagName(
-        "Encoding").at(0).toElement().text()).strip().lower()
+    mimeType = element.elementsByTagName(
+        "MimeType").at(0).toElement().text().strip().lower()
+    schema = element.elementsByTagName(
+        "Schema").at(0).toElement().text().strip().lower()
+    encoding = element.elementsByTagName(
+        "Encoding").at(0).toElement().text().strip().lower()
 #    except:
 #        pass
 
@@ -312,7 +312,7 @@ def allowedValues(aValues):
 
         try:
             for n in range(int(min_val), int(max_val) + 1):
-                myVal = pystring()
+                myVal = []
                 myVal.append(str(n))
                 valList.append(myVal)
         except:
@@ -326,7 +326,7 @@ def allowedValues(aValues):
     if v_element.size() > 0:
         for n in range(v_element.size()):
             mv_element = v_element.at(n).toElement()
-            valList.append(pystring(mv_element.text()).strip())
+            valList.append(mv_element.text().strip())
 
     return valList
 
@@ -388,7 +388,7 @@ class ProcessDescription(QObject):
 
             myBookmarkArray = myBookmark.split("@@")
             connectionName = myBookmarkArray[0]
-            identifier = pystring(settings.value(mySettings + "/identifier"))
+            identifier = settings.value(mySettings + "/identifier")
 
             server = WpsServer.getServer(connectionName)
             process = ProcessDescription(server, identifier)
@@ -479,14 +479,13 @@ class ProcessDescription(QObject):
         self.doc.setContent(self.processXML, True)
 
         processDescription = self.doc.elementsByTagName("ProcessDescription")
-        self.processIdentifier = pystring(
-            processDescription.at(0).toElement().elementsByTagNameNS(
-                "http://www.opengis.net/ows/1.1", "Identifier").at(
-                    0).toElement().text()).strip()
-        self.processName = pystring(processDescription.at(
+        self.processIdentifier = processDescription.at(0).toElement().elementsByTagNameNS(
+            "http://www.opengis.net/ows/1.1", "Identifier").at(
+                0).toElement().text().strip()
+        self.processName = processDescription.at(
             0).toElement().elementsByTagNameNS(
                 "http://www.opengis.net/ows/1.1", "Title").at(
-                    0).toElement().text()).strip()
+                    0).toElement().text().strip()
 
         self.identifier, self.title, self.abstract = getIdentifierTitleAbstractFromElement(self.doc)
         self.inputs = []
@@ -687,7 +686,7 @@ class ProcessDescription(QObject):
 
     def isDataTypeSupportedByServer(self, baseMimeType, name):
         # Return if the given data type is supported by the WPS server
-        for dataType in self._inputsMetaInfo[pystring(name)]:
+        for dataType in self._inputsMetaInfo[name]:
             if baseMimeType in dataType['MimeType']:
                 return True
             return False

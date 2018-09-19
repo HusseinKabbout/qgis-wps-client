@@ -224,8 +224,8 @@ class Streaming(QObject):
         """ Send the GET request """
         url = QUrl(fileLink)
         theReply2 = self.QNAM4Chunks.get(QNetworkRequest(url))
-        theReply2.setProperty("chunkId", pystring(chunkId))
-        theReply2.setProperty("encoding", pystring(encoding))
+        theReply2.setProperty("chunkId", chunkId)
+        theReply2.setProperty("encoding", encoding)
 
     def handleErrors(self, error):  # TODO connect it
         if self.DEBUG:
@@ -387,7 +387,7 @@ class Streaming(QObject):
                     self.loadVirtualRaster)
                 # self.setProcessEnvironment(self.process) Required in Windows?
                 cmd = "gdalbuildvrt"
-                arguments = pystringlist()
+                arguments = []
                 if platform.system() == "Windows" and cmd[-3:] == ".py":
                     command = cmd[:-3] + ".bat"
                 else:
@@ -506,7 +506,7 @@ class Streaming(QObject):
             envval = os.getenv(name)
             if envval is None or envval == "":
                 envval = str(val)
-            elif not pystring(envval).split(
+            elif not envval.split(
                 sep).contains(val, Qt.CaseInsensitive):
                 envval += "%s%s" % (sep, str(val))
             else:
@@ -527,7 +527,7 @@ class Streaming(QObject):
                 process.setEnvironment(env)
 
     def getRasterFiles(self, dir, extension):
-        rasters = pystringlist()
+        rasters = []
         for name in glob.glob(dir + '/*' + extension):
             rasters.append(name)
         return rasters
@@ -535,10 +535,9 @@ class Streaming(QObject):
     def getGdalBinPath(self):
         """ Retrieves GDAL binaries location """
         settings = QSettings()
-        return settings.value("/GdalTools/gdalPath", pystring("")).toString()
+        return settings.value("/GdalTools/gdalPath", "").toString()
 
     def getGdalPymodPath(self):
         """ Retrieves GDAL python modules location """
         settings = QSettings()
-        return settings.value("/GdalTools/gdalPymodPath", pystring(
-            "")).toString()
+        return settings.value("/GdalTools/gdalPymodPath").toString()

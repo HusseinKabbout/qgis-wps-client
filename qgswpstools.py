@@ -42,10 +42,10 @@ class QgsWpsTools(QObject):
         layerNameList.sort()
 
         for layerName in layerNameList:
-            if layerName == name + pystring(i):
+            if layerName == name + i:
                 i += 1
 
-        newName = name + pystring(i)
+        newName = name + i
         return newName
 
     def getLayerNameList(self, dataType=0, all=False):
@@ -121,7 +121,7 @@ class QgsWpsTools(QObject):
 
         for l in range(nLayers):
             layer = mc.layer(l)
-            layerSource = pystring(layer.publicSource()).lower()
+            layerSource = layer.publicSource().lower()
             layerSourceList.append(layerSource)
 
         return layerSourceList
@@ -426,7 +426,7 @@ class QgsWpsTools(QObject):
             textBox.show()
         except:
             textBox = QTextBrowser(dlgProcessTab)
-            textBox.setText(pystring(abstract))
+            textBox.setText(abstract)
 
         dlgProcessTab.addTab(textBox, "Documentation")
 

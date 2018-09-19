@@ -191,7 +191,7 @@ def createTmpGML(vLayer, processSelection="False", supportedGML="GML2"):
         myFileInfo = myFilePath + '/' + QFileInfo(myFile).completeBaseName()
         QFile(myFileInfo + '.xsd').remove()
         QFile(myFileInfo + '.gml').remove()
-    return pystring(gmlString).strip()
+    return gmlString.strip()
 
 
 def getDBEncoding(layerProvider):
@@ -210,7 +210,7 @@ def getDBEncoding(layerProvider):
 
     result = QSqlQuery(query, db)
     result.first()
-    encoding = pystring(result.value(0))
+    encoding = result.value(0)
     db.close()
 
     return encoding

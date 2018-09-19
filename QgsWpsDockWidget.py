@@ -118,7 +118,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
         elif status == 'aborted':
             text = QApplication.translate("QgsWps", " was aborted!")
 
-        self.statusLabel.setText(pystring(self.processIdentifier + text))
+        self.statusLabel.setText(self.processIdentifier + text)
 
     @pyqtSignature("")
     def on_btnConnect_clicked(self):
@@ -279,8 +279,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
                         self.dlgProcessScrollAreaWidget,
                         self.dlgProcessScrollAreaWidgetLayout))
             elif inputType == ExtentInput:
-                myExtent = pystring(
-                    self.iface.mapCanvas().extent()).replace(':', ',')
+                myExtent = self.iface.mapCanvas().extent().replace(':', ',')
                 self.bboxInputLineEditList.append(
                     self.tools.addLiteralLineEdit(
                         title + "(minx,miny,maxx,maxy)",
@@ -336,7 +335,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
 
         myLabel = QLabel(groupbox)
         myLabel.setObjectName("qLabel" + name)
-        myLabel.setText(pystring(title))
+        myLabel.setText(title)
         myLabel.setMinimumWidth(600)
         myLabel.setMinimumHeight(25)
         myLabel.setWordWrap(True)
@@ -397,14 +396,14 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
                     continue
                 # TODO: Check for more types (e.g. KML, Shapefile, JSON)
 #              QMessageBox.information(None, '',  str(self.inputDataTypeList[comboBox.objectName()]["MimeType"]))
-#              QMessageBox.information(None, '',  pystring(comboBox.objectName()))
+#              QMessageBox.information(None, '',  comboBox.objectName())
 
                 self.mimeType = self.inputDataTypeList[
-                    pystring(comboBox.objectName())]["MimeType"]
+                    comboBox.objectName()]["MimeType"]
                 schema = self.inputDataTypeList[
-                    pystring(comboBox.objectName())]["Schema"]
+                    comboBox.objectName()]["Schema"]
                 encoding = self.inputDataTypeList[
-                    pystring(comboBox.objectName())]["Encoding"]
+                    comboBox.objectName()]["Encoding"]
                 self.myLayer = self.tools.getVLayer(comboBox.currentText())
 
 #              try:
@@ -495,9 +494,8 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
             # Attach ALL literal outputs
             for i in range(dataOutputs.size()):
                 f_element = dataOutputs.at(i).toElement()
-                outputIdentifier = pystring(
-                    f_element.elementsByTagName(
-                        "ows:Identifier").at(0).toElement().text()).strip()
+                outputIdentifier = f_element.elementsByTagName(
+                    "ows:Identifier").at(0).toElement().text().strip()
                 literalOutputType = f_element.elementsByTagName(
                     "LiteralOutput")
 
@@ -513,11 +511,11 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
                 outputIdentifier = comboBox.objectName()
 
                 self.mimeType = self.outputDataTypeList[
-                    pystring(outputIdentifier)]["MimeType"]
-                schema = self.outputDataTypeList[pystring(
-                    outputIdentifier)]["Schema"]
-                encoding = self.outputDataTypeList[pystring(
-                    outputIdentifier)]["Encoding"]
+                    outputIdentifier]["MimeType"]
+                schema = self.outputDataTypeList[
+                    outputIdentifier]["Schema"]
+                encoding = self.outputDataTypeList[
+                    outputIdentifier]["Encoding"]
 
                 request.addReferenceOutput(outputIdentifier,
                                            self.mimeType, schema, encoding)
@@ -552,7 +550,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
         layout = QHBoxLayout()
 
         btnOk = QPushButton(groupBox)
-        btnOk.setText(pystring(QApplication.translate("QgsWps", "Run")))
+        btnOk.setText(QApplication.translate("QgsWps", "Run"))
         btnOk.setMinimumWidth(100)
         btnOk.setMaximumWidth(100)
 
@@ -719,7 +717,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
     def deleteServer(self, name):
         settings = QSettings()
         settings.beginGroup("WPS")
-        baseUrl = pystring(settings.value(name + "/url"))
+        baseUrl = settings.value(name + "/url")
         settings.remove(name)
         settings.endGroup()
         # delete related cookies
@@ -750,12 +748,12 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
             myURL = urlparse(str(v))
             mySettings = "/WPS/" + k
 #    settings.setValue("WPS/connections/selected", QVariant(name) )
-            settings.setValue(mySettings + "/scheme", pystring(myURL.scheme))
-            settings.setValue(mySettings + "/server", pystring(myURL.netloc))
-            settings.setValue(mySettings + "/path", pystring(myURL.path))
-            settings.setValue(mySettings + "/method", pystring("GET"))
-            settings.setValue(mySettings + "/version", pystring("1.0.0"))
-            settings.setValue(mySettings + "/url", pystring(v))
+            settings.setValue(mySettings + "/scheme", myURL.scheme)
+            settings.setValue(mySettings + "/server", myURL.netloc)
+            settings.setValue(mySettings + "/path", myURL.path)
+            settings.setValue(mySettings + "/method", "GET")
+            settings.setValue(mySettings + "/version", "1.0.0")
+            settings.setValue(mySettings + "/url", v)
             self.dlg.initQgsWpsGui()
 
     @pyqtSignature("")

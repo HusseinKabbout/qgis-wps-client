@@ -52,7 +52,7 @@ class QgsWps:
         userPluginPath = QFileInfo(
             QgsApplication.qgisUserDbFilePath()).path() + "/python/plugins/wps"
         systemPluginPath = QgsApplication.prefixPath() + "/share/qgis/python/plugins/wps"
-        myLocale = pystring(QSettings().value("locale/userLocale"))[0:2]
+        myLocale = QSettings().value("locale/userLocale")[0:2]
         if QFileInfo(userPluginPath).exists():
             self.pluginPath = userPluginPath
             self.localePath = userPluginPath + "/i18n/wps_" + myLocale + ".qm"

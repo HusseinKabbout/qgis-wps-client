@@ -47,12 +47,10 @@ class WpsServer(QObject):
         for connectionName in connections:
             settings = QSettings()
             entry = "/WPS/" + connectionName
-            scheme = pystring(settings.value(entry + "/scheme"))
-            server = pystring(settings.value(entry + "/server"))
-            port = settings.value(entry + "/port")
-            path = pystring(settings.value(entry + "/path"))
-            version = pystring(settings.value(entry + "/version"))
-            url = pystring(settings.value(entry + "/url"))
+            scheme = settings.value(entry + "/scheme")
+            server = settings.value(entry + "/server")
+            path = settings.value(entry + "/path")
+            version = settings.value(entry + "/version")
 
             baseUrl = scheme + "://" + server + path
             server = WpsServer(connectionName, server, baseUrl, version)
@@ -66,12 +64,11 @@ class WpsServer(QObject):
     def getServer(connectionName):
         settings = QSettings()
         mySettings = "/WPS/" + connectionName
-        scheme = pystring(settings.value(mySettings + "/scheme"))
-        server = pystring(settings.value(mySettings + "/server"))
-        port = settings.value(mySettings + "/port")
-        path = pystring(settings.value(mySettings + "/path"))
-        version = pystring(settings.value(mySettings + "/version"))
-        url = pystring(settings.value(mySettings + "/url"))
+        scheme = settings.value(mySettings + "/scheme")
+        server = settings.value(mySettings + "/server")
+        path = settings.value(mySettings + "/path")
+        version = settings.value(mySettings + "/version")
+        url = settings.value(mySettings + "/url")
 
         if url == '':
             baseUrl = scheme + "://" + server + path
