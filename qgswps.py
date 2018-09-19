@@ -21,9 +21,9 @@ from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtGui import *
 from qgis.core import *
-from QgsWpsDockWidget import QgsWpsDockWidget
-from doAbout import DlgAbout
-import resources_rc
+from .QgsWpsDockWidget import QgsWpsDockWidget
+from .doAbout import DlgAbout
+from . import resources_rc
 
 
 SEXTANTE_SUPPORT = False
@@ -50,7 +50,7 @@ class QgsWps:
 
         # Initialise the translation environment
         userPluginPath = QFileInfo(
-            QgsApplication.qgisUserDbFilePath()).path() + "/python/plugins/wps"
+            QgsApplication.qgisUserDatabaseFilePath()).path() + "/python/plugins/wps"
         systemPluginPath = QgsApplication.prefixPath() + "/share/qgis/python/plugins/wps"
         myLocale = QSettings().value("locale/userLocale")[0:2]
         if QFileInfo(userPluginPath).exists():

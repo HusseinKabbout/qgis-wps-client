@@ -17,10 +17,10 @@
   ***************************************************************************/
 """
 
-from qgos.PyQt.QtWidgets import *
-from wps import version
+from qgis.PyQt.QtWidgets import *
+from . import version
 
-from Ui_qgswpserrormsggui import Ui_Dialog
+from .Ui_qgswpserrormsggui import Ui_Dialog
 
 
 class QgsWpsErrorMsgGui(QDialog, Ui_Dialog):
@@ -34,6 +34,7 @@ class QgsWpsErrorMsgGui(QDialog, Ui_Dialog):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         self.setWindowTitle('QGIS WPS-Client ' + version())
+        self.buttonBox.rejected.connect(self.buttonBox_rejected)
 
-    def on_buttonBox_rejected(self):
+    def buttonBox_rejected(self):
         self.close()

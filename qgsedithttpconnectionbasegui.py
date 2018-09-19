@@ -21,16 +21,17 @@ from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtGui import *
 from qgis.core import *
 from . import version
-from .Ui_qgsnewhttpconnectionbase import Ui_QgsNewHttpConnectionBase
+from .Ui_qgsedithttpconnectionbase import Ui_QgsEditHttpConnectionBase
 from urllib.parse import urlparse
 
 
-class QgsNewHttpConnectionBaseGui(QDialog,
-                                  QObject, Ui_QgsNewHttpConnectionBase):
+class QgsEditHttpConnectionBaseGui(QDialog,
+                                  QObject, Ui_QgsEditHttpConnectionBase):
     MSG_BOX_TITLE = "WPS"
 
-    def __init__(self, parent, fl):
+    def __init__(self, parent, fl, old_name):
         QDialog.__init__(self, parent, fl)
+        self.old_name = old_name
         self.parent = parent
         self.flags = fl
         self.setupUi(self)
@@ -55,14 +56,16 @@ class QgsNewHttpConnectionBaseGui(QDialog,
                                     self.tr("Url Error"),
                                     self.tr("Connection url is missing."))
         else:
-            if len(dpl_name_list) > 1:
-                QMessageBox.information(self,
-                                        self.tr("Name Error"),
-                                        self.tr("Connection name is already"
-                                                " used.\nPlease provide"
-                                                " another name."))
-                self.txtName.selectAll()
-                return
+            if self.old_name != self.txtName.text():
+                settings.remove("/WPS/" + self.old_name)
+                if len(dpl_name_list) > 1:
+                    QMessageBox.information(self,
+                                            self.tr("Name Error"),
+                                            self.tr("Connection name is already"
+                                                    " used.\nPlease provide"
+                                                    " another name."))
+                    self.txtName.selectAll()
+                    return
             settings.setValue(mySettings + "/scheme", myURL.scheme)
             settings.setValue(mySettings + "/server", myURL.netloc)
             settings.setValue(mySettings + "/path", myURL.path)

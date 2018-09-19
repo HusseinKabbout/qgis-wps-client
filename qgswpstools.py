@@ -21,7 +21,7 @@ from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtNetwork import *
-from qgis.PyQt.QtWebKit import QWebView
+from qgis.PyQt.QtWebKit import *
 from qgis.core import *
 
 
@@ -33,10 +33,10 @@ class QgsWpsTools(QObject):
         self.dlg = dlg
 
     def uniqueLayerName(self, name):
-        mapLayers = QgsMapLayerRegistry.instance().mapLayers()
+        mapLayers = QgsProject.instance().mapLayers()
         i = 1
         layerNameList = []
-        for (k, layer) in mapLayers.iteritems():
+        for (k, layer) in mapLayers.items():
             layerNameList.append(layer.name())
 
         layerNameList.sort()
@@ -45,15 +45,15 @@ class QgsWpsTools(QObject):
             if layerName == name + i:
                 i += 1
 
-        newName = name + i
+        newName = name + str(i)
         return newName
 
     def getLayerNameList(self, dataType=0, all=False):
         myLayerList = []
 
         if all:
-            mapLayers = QgsMapLayerRegistry.instance().mapLayers()
-            for (k, layer) in mapLayers.iteritems():
+            mapLayers = QgsProject.instance().mapLayers()
+            for (k, layer) in mapLayers.items():
                 myLayerList.append(layer.name())
         else:
             mc = self.iface.mapCanvas()
@@ -103,7 +103,7 @@ class QgsWpsTools(QObject):
         for l in range(nLayers):
             layer = mc.layer(l)
             if layer.name() == name:
-                dataSource = QgsDataSourceURI(
+                dataSource = QgsDataSourceUri(
                     layer.dataProvider().dataSourceUri())
                 theTableName = dataSource.quotedTablename()
                 theTableName.replace('"', '')
@@ -421,6 +421,7 @@ class QgsWpsTools(QObject):
         # Check for URL
 
         try:
+            # FixMe:
             textBox = QWebView(dlgProcessTab)
             textBox.load(QUrl(abstract))
             textBox.show()

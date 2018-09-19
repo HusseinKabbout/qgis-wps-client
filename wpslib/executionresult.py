@@ -22,13 +22,13 @@ from qgis.PyQt.QtNetwork import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt import *
-from qgis.PyQt.QtXmlPatterns import *
+from PyQt5.QtXmlPatterns import *
 from qgis.core import QgsNetworkAccessManager
 from functools import partial
-from wps.wpslib.processdescription import getFileExtension
+from .processdescription import getFileExtension
 import tempfile
 import base64
-from wps.wpslib.wpsservercookie import WpsServerCookie
+from .wpsservercookie import WpsServerCookie
 
 
 # Execute result example:
@@ -109,12 +109,13 @@ class ExecutionResult(QObject):
         postData = QByteArray()
         postData.append(requestXml)
 
-        processUrl.removeQueryItem('Request')
-        processUrl.removeQueryItem('identifier')
-        processUrl.removeQueryItem('Version')
-        processUrl.removeQueryItem('Service')
+        # processUrl.removeQueryItem('Request')
+        # processUrl.removeQueryItem('identifier')
+        # processUrl.removeQueryItem('Version')
+        # processUrl.removeQueryItem('Service')
 
-        qDebug("Post URL=" + processUrl)
+        # qDebug("Post URL=" + processUrl)
+        qDebug("Post URL=" + "processUrl")
 
         thePostHttp = QgsNetworkAccessManager.instance()
         request = QNetworkRequest(processUrl)
@@ -306,7 +307,7 @@ class ExecutionResult(QObject):
             query = QXmlQuery(QXmlQuery.XSLT20)
             xslFile = QFile(":/plugins/wps/exception.xsl")
             xslFile.open(QIODevice.ReadOnly)
-            query.setFocus(resultXML)
+            query.setFocus(resultXML.decode("utf-8"))
             query.setQuery(xslFile)
             exceptionHtml = query.evaluateToString()
             if exceptionHtml is None:

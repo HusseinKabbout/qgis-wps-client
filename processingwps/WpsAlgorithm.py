@@ -12,10 +12,10 @@ from processing.outputs.OutputRaster import OutputRaster
 from processing.outputs.OutputVector import OutputVector
 from processing.outputs.OutputString import OutputString
 from processing.tools import dataobjects
-from wps.wpslib.processdescription import *
-from wps.wpslib.executionrequest import ExecutionRequest
-from wps.wpslib.executionrequest import createTmpGML
-from wps.wpslib.executionresult import ExecutionResult
+from .wpslib.processdescription import *
+from .wpslib.executionrequest import ExecutionRequest
+from .wpslib.executionrequest import createTmpGML
+from .wpslib.executionresult import ExecutionResult
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *

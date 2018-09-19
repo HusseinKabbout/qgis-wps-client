@@ -12,9 +12,9 @@ class WpsServerAction(ToolboxAction):
         self.group = WpsAlgorithm.groupName(server)
 
     def execute(self):
-        QObject.connect(self.server, SIGNAL(
-            "capabilitiesRequestFinished"), self._capabilitiesRequestFinished)
         self.server.requestCapabilities()
+        self.server.capabilitiesRequestFinished.connect(
+            self._capabilitiesRequestFinished)
 
     def _capabilitiesRequestFinished(self):
         self.processalgs = []

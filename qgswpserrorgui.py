@@ -8,7 +8,7 @@ from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtWidgets import *
 
-from Ui_qgswpserrorgui import Ui_Dialog
+from .Ui_qgswpserrorgui import Ui_Dialog
 
 
 class ErrorGUI(QDialog, Ui_Dialog):
@@ -22,9 +22,9 @@ class ErrorGUI(QDialog, Ui_Dialog):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         QMessageBox.information(None, '', 'Hallo')
+        self.buttonBox.rejected.connect(self.buttonBox_rejected)
 
-    @pyqtSignature("")
-    def on_buttonBox_rejected(self):
+    def buttonBox_rejected(self):
         """
         Slot documentation goes here.
         """

@@ -20,8 +20,8 @@ from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.core import *
-from wps import version
-from Ui_qgswpsdescribeprocessgui import Ui_QgsWpsDescribeProcessGUI
+from . import version
+from .Ui_qgswpsdescribeprocessgui import Ui_QgsWpsDescribeProcessGUI
 
 
 class QgsWpsDescribeProcessGui(QDialog, QObject, Ui_QgsWpsDescribeProcessGUI):

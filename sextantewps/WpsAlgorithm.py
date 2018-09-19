@@ -12,10 +12,10 @@ from sextante.parameters.ParameterFile import ParameterFile
 from sextante.outputs.OutputRaster import OutputRaster
 from sextante.outputs.OutputVector import OutputVector
 from sextante.outputs.OutputString import OutputString
-from wps.wpslib.processdescription import *
-from wps.wpslib.executionrequest import ExecutionRequest
-from wps.wpslib.executionrequest import createTmpGML
-from wps.wpslib.executionresult import ExecutionResult
+from .wpslib.processdescription import *
+from .wpslib.executionrequest import ExecutionRequest
+from .wpslib.executionrequest import createTmpGML
+from .wpslib.executionresult import ExecutionResult
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *

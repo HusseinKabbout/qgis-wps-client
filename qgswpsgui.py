@@ -21,11 +21,11 @@ from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtNetwork import *
 from qgis.core import *
-from wps import version
-from wpslib.wpsserver import WpsServer
-from Ui_qgswpsgui import Ui_QgsWps
-from qgswpsbookmarks import Bookmarks
-from doAbout import DlgAbout
+from . import version
+from .wpslib.wpsserver import WpsServer
+from .Ui_qgswpsgui import Ui_QgsWps
+from .qgswpsbookmarks import Bookmarks
+from .doAbout import DlgAbout
 
 
 class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
@@ -47,16 +47,31 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
         self.filterText = ''
         self.lneFilter.setText('')
 
+        self.buttonBox.rejected.connect(self.buttonBox_rejected)
+        self.buttonBox.accepted.connect(self.buttonBox_accepted)
+        self.btnConnect.clicked.connect(self.btnConnect_clicked)
+        self.btnBookmarks.clicked.connect(self.btnBookmarks_clicked)
+        self.btnNew.clicked.connect(self.btnNew_clicked)
+        self.btnEdit.clicked.connect(self.btnEdit_clicked)
+        self.cmbConnections.activated.connect(self.cmbConnections_activated)
+        self.btnDelete.clicked.connect(self.btnDelete_clicked)
+        self.btnAbout.clicked.connect(self.btnAbout_clicked)
+        self.treeWidget.itemDoubleClicked.connect(
+            self.treeWidget_itemDoubleClicked)
+        self.lneFilter.textChanged.connect(self.lneFilter_textChanged)
+
+        self.btnDelete.setEnabled(False)
+
     def initQgsWpsGui(self):
         self.btnConnect.setEnabled(False)
         settings = QSettings()
         settings.beginGroup("WPS")
         connections = settings.childGroups()
         self.cmbConnections.clear()
-        self.cmbConnections.addItems(connections)
+        self.cmbConnections.addItems(list(set(connections)))
         self.treeWidget.clear()
 
-        if self.cmbConnections.size() > 0:
+        if self.cmbConnections.count() > 0:
             self.btnConnect.setEnabled(True)
             self.btnEdit.setEnabled(True)
             self.btnDelete.setEnabled(True)
@@ -74,13 +89,13 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
     def getBookmark(self, item):
         self.requestDescribeProcess.emit(item.text(0), item.text(1))
 
-    def on_buttonBox_rejected(self):
+    def buttonBox_rejected(self):
         self.close()
 
     # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
     # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
-    @pyqtSignature("on_buttonBox_accepted()")
-    def on_buttonBox_accepted(self):
+
+    def buttonBox_accepted(self):
         if self.treeWidget.topLevelItemCount() == 0:
             QMessageBox.warning(None, 'WPS Warning', 'No Service connected!')
         else:
@@ -93,8 +108,8 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
 
     # see http://www.riverbankcomputing.com/Docs/PyQt4/pyqt4ref.html#connecting-signals-and-slots
     # without this magic, the on_btnOk_clicked will be called two times: one clicked() and one clicked(bool checked)
-    @pyqtSignature("on_btnConnect_clicked()")
-    def on_btnConnect_clicked(self):
+
+    def btnConnect_clicked(self):
         self.treeWidget.clear()
         self.filterText = ''
         self.lneFilter.setText('')
@@ -104,29 +119,35 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
             self.createCapabilitiesGUI)
         self.server.requestCapabilities()
 
-    @pyqtSignature("on_btnBookmarks_clicked()")
-    def on_btnBookmarks_clicked(self):
+    def btnBookmarks_clicked(self):
         self.dlgBookmarks = Bookmarks(self.fl)
         self.dlgBookmarks.getBookmarkDescription.connect(self.getBookmark)
         #      self.dlgBookmarks.bookmarksChanged.connect(bookmarksChanged())
         self.dlgBookmarks.show()
 
-    @pyqtSignature("on_btnNew_clicked()")
-    def on_btnNew_clicked(self):
+    def btnNew_clicked(self):
         self.newServer.emit()
+        if self.cmbConnections.currentText():
+            self.btnDelete.setEnabled(True)
 
-    @pyqtSignature("on_btnEdit_clicked()")
-    def on_btnEdit_clicked(self):
+    def btnEdit_clicked(self):
         self.editServer.emit(self.cmbConnections.currentText())
 
-    @pyqtSignature("on_cmbConnections_activated(int)")
-    def on_cmbConnections_activated(self, index):
+    def cmbConnections_activated(self, index):
         settings = QSettings()
         settings.setValue("WPS-lastConnection/Index", index)
+        self.btnDelete.setEnabled(True)
 
-    @pyqtSignature("on_btnDelete_clicked()")
-    def on_btnDelete_clicked(self):
+    def btnDelete_clicked(self):
+        res = QMessageBox.question(
+            self, self.tr("Delete server"),
+            self.tr("Are you sure you want to delete {0}?".format(
+                self.cmbConnections.currentText())))
+        if res == QMessageBox.No:
+            return
         self.deleteServer.emit(self.cmbConnections.currentText())
+        if not self.cmbConnections.currentText():
+            self.btnDelete.setEnabled(False)
 
     def initTreeWPSServices(self, taglist):
         self.treeWidget.clear()
@@ -156,13 +177,10 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
 
         self.treeWidget.addTopLevelItems(itemList)
 
-    @pyqtSignature("on_btnAbout_clicked()")
-    def on_btnAbout_clicked(self):
+    def btnAbout_clicked(self):
         self.dlgAbout.show()
-        pass
 
-    @pyqtSignature("QTreeWidgetItem*, int")
-    def on_treeWidget_itemDoubleClicked(self, item, column):
+    def treeWidget_itemDoubleClicked(self, item, column):
         self.getDescription.emit(self.cmbConnections.currentText(),
                                  self.treeWidget.currentItem())
 
@@ -171,8 +189,7 @@ class QgsWpsGui(QDialog, QObject, Ui_QgsWps):
         self.itemListAll = self.server.parseCapabilitiesXML()
         self.initTreeWPSServices(self.itemListAll)
 
-    @pyqtSignature("QString")
-    def on_lneFilter_textChanged(self, p0):
+    def lneFilter_textChanged(self, p0):
         """
         Slot documentation goes here.
         """

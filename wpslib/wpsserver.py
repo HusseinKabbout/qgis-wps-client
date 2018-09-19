@@ -23,7 +23,7 @@ from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt import *
 from qgis.core import QgsNetworkAccessManager
-from wps.wpslib.wpsservercookie import WpsServerCookie
+from .wpsservercookie import WpsServerCookie
 
 
 class WpsServer(QObject):
@@ -132,12 +132,12 @@ class WpsServer(QObject):
                 None,
                 QApplication.translate(
                     "QgsWps",
-                    "Only WPS Version 1.0.0 is supported"), xmlString)
-            pass
+                    "Only WPS Version 1.0.0 is supported"),
+                xmlString.decode("utf-8"))
         self.capabilitiesRequestFinished.emit()
 
     def parseCapabilitiesXML(self):
-        from wps.wpslib.processdescription import ProcessDescription
+        from .processdescription import ProcessDescription
         version = self.doc.elementsByTagNameNS(
             "http://www.opengis.net/wps/1.0.0", "Process")
         title = self.doc.elementsByTagNameNS(

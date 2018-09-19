@@ -8,7 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_QgsNewHttpConnectionBase(object):
+class Ui_QgsEditHttpConnectionBase(object):
     def setupUi(self, QgsNewHttpConnectionBase):
         QgsNewHttpConnectionBase.setObjectName("QgsNewHttpConnectionBase")
         QgsNewHttpConnectionBase.resize(569, 160)
@@ -60,4 +60,3 @@ class Ui_QgsNewHttpConnectionBase(object):
         self.txtName.setToolTip(_translate("QgsNewHttpConnectionBase", "Name of the new connection"))
         self.TextLabel1.setText(_translate("QgsNewHttpConnectionBase", "&URL"))
         self.txtUrl.setToolTip(_translate("QgsNewHttpConnectionBase", "HTTP address of the Web Map Server"))
-

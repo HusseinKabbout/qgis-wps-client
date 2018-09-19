@@ -27,7 +27,8 @@ class WpsServerCookie(QObject):
         self.server = processUrl.host()
         self.path = processUrl.path()
         self.port = processUrl.port()
-        self.cookieSettings = "WPS-Cookie/" + self.server + ":" + self.port + self.path
+        self.cookieSettings = "WPS-Cookie/{0}:{1}{2}".format(
+            self.server, self.port, self.path)
 
     # if the cookie exists, delete the old one then add, otherwise add directly
     def setServerCookies(self, qt_cookies):

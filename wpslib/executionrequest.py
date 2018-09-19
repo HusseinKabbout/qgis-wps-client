@@ -22,7 +22,7 @@ from qgis.PyQt import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtSql import *
-from qgis.core import QgsVectorFileWriter, QgsDataSourceURI
+from qgis.core import QgsVectorFileWriter, QgsDataSourceUri
 import os
 import tempfile
 import base64
@@ -195,7 +195,7 @@ def createTmpGML(vLayer, processSelection="False", supportedGML="GML2"):
 
 
 def getDBEncoding(layerProvider):
-    dbConnection = QgsDataSourceURI(layerProvider.dataSourceUri())
+    dbConnection = QgsDataSourceUri(layerProvider.dataSourceUri())
     db = QSqlDatabase.addDatabase("QPSQL", "WPSClient")
     db.setHostName(dbConnection.host())
     db.setDatabaseName(dbConnection.database())

@@ -25,8 +25,8 @@ from qgis.PyQt.QtNetwork import *
 from qgis.core import *
 from qgis.gui import QgsRubberBand, QgsVertexMarker
 
-from wpslib.processdescription import getFileExtension, isMimeTypeVector, isMimeTypeRaster
-from wpslib.executionresult import decodeBase64
+from .wpslib.processdescription import getFileExtension, isMimeTypeVector, isMimeTypeRaster
+from .wpslib.executionresult import decodeBase64
 
 from functools import partial
 import tempfile
@@ -356,7 +356,7 @@ class Streaming(QObject):
                 self.__groupIndex = self.__legend.addGroup("Streamed-raster")
 
             rLayer = QgsRasterLayer(resultFile, "raster_" + str(chunkId))
-            bLoaded = QgsMapLayerRegistry.instance().addMapLayer(rLayer)
+            bLoaded = QgsProject.instance().addMapLayer(rLayer)
             self.stretchRaster(rLayer)
             self.__legend.moveLayer(rLayer, self.__groupIndex + 1)
 
@@ -373,7 +373,7 @@ class Streaming(QObject):
         if not self.__bFirstChunk:
             if isMimeTypeVector(self.mimeType, True) is not None:
                 self.removeTempGeometry(self.__geometryType)
-                QgsMapLayerRegistry.instance().addMapLayer(self.__memoryLayer)
+                QgsProject.instance().addMapLayer(self.__memoryLayer)
 
             elif isMimeTypeRaster(self.mimeType, True) is not None:
                 self.parent.lblProcess.setText(
@@ -382,9 +382,7 @@ class Streaming(QObject):
                 # Generate gdal virtual raster
                 # Code adapted from GdalTools (C) 2009 by L. Masini and G. Sucameli (Faunalia)
                 self.process = QProcess(self)
-                self.connect(self.process, SIGNAL(
-                    "finished(int, QProcess::ExitStatus)"),
-                    self.loadVirtualRaster)
+                self.process.finished.connect(self.loadVirtualRaster)
                 # self.setProcessEnvironment(self.process) Required in Windows?
                 cmd = "gdalbuildvrt"
                 arguments = []
@@ -479,7 +477,7 @@ class Streaming(QObject):
         if exitCode == 0:
             self.__legend.setGroupVisible(self.__groupIndex, False)
             rLayer = QgsRasterLayer(self.__virtualFile, "virtual")
-            bLoaded = QgsMapLayerRegistry.instance().addMapLayer(rLayer)
+            bLoaded = QgsProject.instance().addMapLayer(rLayer)
             self.stretchRaster(rLayer)
         self.process.kill()
 
@@ -499,7 +497,7 @@ class Streaming(QObject):
 
         sep = os.pathsep
 
-        for name, val in envvar_list.iteritems():
+        for name, val in envvar_list.items():
             if val is None or val == "":
                 continue
 

@@ -1,11 +1,11 @@
 from sextante.core.AlgorithmProvider import AlgorithmProvider
 from sextante.core.SextanteConfig import Setting, SextanteConfig
 from sextante.core.SextanteUtils import mkdir, SextanteUtils
-from WpsAlgorithm import WpsAlgorithm
-from AddNewWpsAction import AddNewWpsAction
-from WpsServerAction import WpsServerAction
-from wps.wpslib.wpsserver import WpsServer
-from wps.wpslib.processdescription import ProcessDescription
+from .WpsAlgorithm import WpsAlgorithm
+from .AddNewWpsAction import AddNewWpsAction
+from .WpsServerAction import WpsServerAction
+from .wpslib.wpsserver import WpsServer
+from .wpslib.processdescription import ProcessDescription
 import os
 from qgis.PyQt.QtGui import *
 

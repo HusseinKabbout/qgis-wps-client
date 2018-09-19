@@ -23,10 +23,10 @@ from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt import *
 from qgis.core import QgsNetworkAccessManager
-from wpsserver import WpsServer
+from .wpsserver import WpsServer
 from collections import namedtuple
 import os
-from wps.wpslib.wpsservercookie import WpsServerCookie
+from .wpsservercookie import WpsServerCookie
 
 
 # Process description example:

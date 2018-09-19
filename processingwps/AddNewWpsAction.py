@@ -11,8 +11,7 @@ class AddNewWpsAction(ToolboxAction):
         self.name = "Connect to WPS servers"
         self.group = "Tools"
         self.wpsDockWidget = wpsDockWidget
-        QObject.connect(wpsDockWidget, SIGNAL(
-            "bookmarksChanged()"), Processing.updateAlgsList)
+        self.wpsDockWidget.bookmarksChanged.connect(Processing.updateAlgsList)
 
     def getIcon(self):
         return QIcon(os.path.dirname(__file__) + "/../images/script.png")

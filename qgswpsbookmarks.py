@@ -20,11 +20,12 @@
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 from qgis.PyQt.QtCore import *
-from wps import version
-from wpslib.wpsserver import WpsServer
-from wpslib.processdescription import ProcessDescription
+from qgis.PyQt.QtCore import pyqtSignal
+from . import version
+from .wpslib.wpsserver import WpsServer
+from .wpslib.processdescription import ProcessDescription
 
-from Ui_qgswpsbookmarks import Ui_Bookmarks
+from .Ui_qgswpsbookmarks import Ui_Bookmarks
 
 
 class Bookmarks(QDialog, QObject, Ui_Bookmarks):
@@ -43,6 +44,17 @@ class Bookmarks(QDialog, QObject, Ui_Bookmarks):
         self.setWindowTitle('QGIS WPS-Client ' + version())
         self.initTreeWPSServices()
 
+        self.treeWidget.itemClicked.connect(
+            self.treeWidget_itemClicked)
+        self.treeWidget.itemDoubleClicked.connect(
+            self.treeWidget_itemDoubleClicked)
+        # self.btnConnect.clicked.connect(self.btnConnect_clicked)
+        # self.btnEdit.clicked.connect(self.btnEdit_clicked)
+        self.btnRemove.clicked.connect(self.btnRemove_clicked)
+        self.btnOK.clicked.connect(self.btnOK_clicked)
+        self.btnClose.clicked.connect(self.btnClose_clicked)
+        self.btnRemove.setEnabled(False)
+
     def initTreeWPSServices(self):
         self.treeWidget.clear()
         self.treeWidget.setColumnCount(self.treeWidget.columnCount())
@@ -57,30 +69,28 @@ class Bookmarks(QDialog, QObject, Ui_Bookmarks):
         self.btnOK.setEnabled(False)
         self.treeWidget.addTopLevelItems(itemList)
 
-    @pyqtSignature("QTreeWidgetItem*, int")
-    def on_treeWidget_itemDoubleClicked(self, item, column):
+    def treeWidget_itemDoubleClicked(self, item, column):
         self.getBookmarkDescription.emit(item)
         self.close()
 
-    @pyqtSignature("")
-    def on_btnConnect_clicked(self):
+    def treeWidget_itemClicked(self, item, column):
+        self.btnRemove.setEnabled(True)
+
+    def btnConnect_clicked(self):
         self.close()
 
-    @pyqtSignature("")
-    def on_btnEdit_clicked(self):
+    def btnEdit_clicked(self):
         pass
 
-    @pyqtSignature("")
-    def on_btnRemove_clicked(self):
+    def btnRemove_clicked(self):
         if self.treeWidget.currentItem():
             self.removeBookmark(self.treeWidget.currentItem())
+        self.btnRemove.setEnabled(False)
 
-    @pyqtSignature("")
-    def on_btnOK_clicked(self):
+    def btnOK_clicked(self):
         self.getBookmarkDescription.emit(self.myItem)
 
-    @pyqtSignature("")
-    def on_btnClose_clicked(self):
+    def btnClose_clicked(self):
         self.close()
 
     def removeBookmark(self, item):

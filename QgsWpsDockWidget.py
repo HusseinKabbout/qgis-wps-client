@@ -24,21 +24,22 @@ from qgis.PyQt import QtXml
 from qgis.PyQt.QtNetwork import *
 from qgis.core import *
 from . import version
-from qgswpsgui import QgsWpsGui
-from qgswpsdescribeprocessgui import QgsWpsDescribeProcessGui
-from qgswpstools import QgsWpsTools
-from qgsnewhttpconnectionbasegui import QgsNewHttpConnectionBaseGui
-from wpslib.wpsserver import WpsServer
-from wpslib.processdescription import *
-from wpslib.executionrequest import ExecutionRequest
-from wpslib.executionrequest import createTmpGML
-from wpslib.executionresult import ExecutionResult
-from urlparse import urlparse
-from wps.wpslib.wpsservercookie import WpsServerCookie
-from Ui_QgsWpsDockWidget import Ui_QgsWpsDockWidget
-from streaming import Streaming
+from .qgswpsgui import QgsWpsGui
+from .qgswpsdescribeprocessgui import QgsWpsDescribeProcessGui
+from .qgswpstools import QgsWpsTools
+from .qgsedithttpconnectionbasegui import QgsEditHttpConnectionBaseGui
+from .qgsnewhttpconnectionbasegui import QgsNewHttpConnectionBaseGui
+from .wpslib.wpsserver import WpsServer
+from .wpslib.processdescription import *
+from .wpslib.executionrequest import ExecutionRequest
+from .wpslib.executionrequest import createTmpGML
+from .wpslib.executionresult import ExecutionResult
+from .wpslib.wpsservercookie import WpsServerCookie
+from urllib.parse import urlparse
+from .Ui_QgsWpsDockWidget import Ui_QgsWpsDockWidget
+from .streaming import Streaming
 
-import resources_rc
+from . import resources_rc
 
 DEBUG = False
 
@@ -63,8 +64,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
         self.setWindowTitle('QGIS WPS-Client ' + version())
 
         self.defaultServers = {
-            'Kappasys WPS': 'https://kappasys.ch/cgi-bin/pywps.cgi',
-            '52 North': 'http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService'
+            '52 North': 'http://geoprocessing.demo.52north.org/latest-wps/WebProcessingService?Request=GetCapabilities&Service=WPS'
             }
 
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint  # QgisGui.ModalDialogFlags
@@ -75,9 +75,9 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
         self.dlg.deleteServer.connect(self.deleteServer)
         self.dlg.pushDefaultServer.clicked.connect(self.pushDefaultServer)
         self.dlg.requestDescribeProcess.connect(self.requestDescribeProcess)
-#        self.dlg.bookmarksChanged.connect()"), self, SIGNAL("bookmarksChanged()"))
-
         self.killed.connect(self.stopStreaming)
+        self.btnConnect.clicked.connect(self.btnConnect_clicked)
+        self.btnKill.clicked.connect(self.btnKill_clicked)
 
     def getDescription(self, name, item):
         self.requestDescribeProcess(name, item.text(0))
@@ -120,8 +120,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
 
         self.statusLabel.setText(self.processIdentifier + text)
 
-    @pyqtSignature("")
-    def on_btnConnect_clicked(self):
+    def btnConnect_clicked(self):
         self.dlg.initQgsWpsGui()
         self.statusLabel.setText("")
         self.progressBar.setRange(0, 100)
@@ -279,7 +278,8 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
                         self.dlgProcessScrollAreaWidget,
                         self.dlgProcessScrollAreaWidgetLayout))
             elif inputType == ExtentInput:
-                myExtent = self.iface.mapCanvas().extent().replace(':', ',')
+                # myExtent = self.iface.mapCanvas().extent().replace(':', ',')
+                myExtent = self.iface.mapCanvas().extent().asWktCoordinates()
                 self.bboxInputLineEditList.append(
                     self.tools.addLiteralLineEdit(
                         title + "(minx,miny,maxx,maxy)",
@@ -578,8 +578,10 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
 
     def saveBookmark(self):
         server = WpsServer.getServer(self.dlgProcess.currentServiceName())
+        # process = ProcessDescription(
+        #     server, self.processUrl.queryItemValue('identifier'))
         process = ProcessDescription(
-            server, self.processUrl.queryItemValue('identifier'))
+            server, 'identifier')
         process.saveBookmark()
         self.bookmarksChanged.emit()
         QMessageBox.information(self.iface.mainWindow(),
@@ -638,12 +640,12 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
                 vlayer.setCrs(self.myLayer.dataProvider().crs())
             except:
                 pass
-            bLoaded = QgsMapLayerRegistry.instance().addMapLayer(vlayer)
+            bLoaded = QgsProject.instance().addMapLayer(vlayer)
         # Raster data
         elif isMimeTypeRaster(self.mimeType) is not None:
             # We can directly attach the new layer
             rLayer = QgsRasterLayer(resultFile, layerName)
-            bLoaded = QgsMapLayerRegistry.instance().addMapLayer(rLayer)
+            bLoaded = QgsProject.instance().addMapLayer(rLayer)
 
         # Text data
         elif isMimeTypeText(self.mimeType) is not None:
@@ -730,7 +732,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
     def editServer(self, name):
         server = WpsServer.getServer(name)
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint  # QgisGui.ModalDialogFlags
-        dlgEdit = QgsNewHttpConnectionBaseGui(self.dlg, flags)
+        dlgEdit = QgsEditHttpConnectionBaseGui(self.dlg, flags, name)
         dlgEdit.txtName.setText(name)
         dlgEdit.txtUrl.setText(server.baseUrl)
         dlgEdit.show()
@@ -744,7 +746,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
 
     def pushDefaultServer(self):
         settings = QSettings()
-        for k, v in self.defaultServers.iteritems():
+        for k, v in self.defaultServers.items():
             myURL = urlparse(str(v))
             mySettings = "/WPS/" + k
 #    settings.setValue("WPS/connections/selected", QVariant(name) )
@@ -756,10 +758,8 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
             settings.setValue(mySettings + "/url", v)
             self.dlg.initQgsWpsGui()
 
-    @pyqtSignature("")
-    def on_btnKill_clicked(self):
-        self.wps.thePostReply.abort()
-        self.wps.thePostReply.deleteLater()
+    def btnKill_clicked(self):
+        # self.wps.thePostReply.abort()
+        # self.wps.thePostReply.deleteLater()
         self.setStatus('aborted')
         self.killed.emit()
-        pass

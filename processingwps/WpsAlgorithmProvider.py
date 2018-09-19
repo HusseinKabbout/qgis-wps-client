@@ -1,11 +1,11 @@
 from Processing.core.AlgorithmProvider import AlgorithmProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
 from processing.core.ProcessingUtils import mkdir, ProcessingUtils
-from WpsAlgorithm import WpsAlgorithm
-from AddNewWpsAction import AddNewWpsAction
-from WpsServerAction import WpsServerAction
-from wps.wpslib.wpsserver import WpsServer
-from wps.wpslib.processdescription import ProcessDescription
+from .WpsAlgorithm import WpsAlgorithm
+from .AddNewWpsAction import AddNewWpsAction
+from .WpsServerAction import WpsServerAction
+from .wpslib.wpsserver import WpsServer
+from .wpslib.processdescription import ProcessDescription
 import os
 from qgis.PyQt.QtGui import *
 
