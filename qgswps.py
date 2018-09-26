@@ -26,15 +26,6 @@ from .doAbout import DlgAbout
 from . import resources_rc
 
 
-SEXTANTE_SUPPORT = False
-try:
-    from sextante.core.Sextante import Sextante
-    from wps.sextantewps.WpsAlgorithmProvider import WpsAlgorithmProvider
-    SEXTANTE_SUPPORT = True
-except ImportError:
-    pass
-
-
 DEBUG = False
 
 # Our main class for the plugin
@@ -93,17 +84,6 @@ class QgsWps:
         self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.myDockWidget)
         self.myDockWidget.show()
 
-        if SEXTANTE_SUPPORT:
-            self.provider = WpsAlgorithmProvider(self.myDockWidget)
-        else:
-            self.provider = None
-
-        if self.provider:
-            try:
-                Sextante.addProvider(self.provider, True)  # Force tree update
-            except TypeError:
-                Sextante.addProvider(self.provider)
-
     def unload(self):
         if hasattr(self.iface, "addPluginToWebMenu"):
             self.iface.removePluginWebMenu("WPS-Client", self.action)
@@ -118,9 +98,6 @@ class QgsWps:
             self.myDockWidget.close()
 
         self.myDockWidget = None
-
-        if self.provider:
-            Sextante.removeProvider(self.provider)
 
     def run(self):
         if self.myDockWidget.isVisible():
