@@ -64,7 +64,7 @@ class QgsWpsDockWidget(QDockWidget, Ui_QgsWpsDockWidget):
         self.setWindowTitle('QGIS WPS-Client ' + version())
 
         self.defaultServers = {
-            '52 North': 'http://geoprocessing.demo.52north.org/latest-wps/WebProcessingService?Request=GetCapabilities&Service=WPS'
+            '52 North': 'http://geoprocessing.demo.52north.org/latest-wps/WebProcessingService'
             }
 
         flags = Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint  # QgisGui.ModalDialogFlags
