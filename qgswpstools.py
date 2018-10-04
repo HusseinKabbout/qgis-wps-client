@@ -42,7 +42,7 @@ class QgsWpsTools(QObject):
         layerNameList.sort()
 
         for layerName in layerNameList:
-            if layerName == name + i:
+            if layerName == name + str(i):
                 i += 1
 
         newName = name + str(i)

@@ -311,10 +311,11 @@ def allowedValues(aValues):
             value_element, "MaximumValue").at(0).toElement().text()
 
         try:
-            for n in range(int(min_val), int(max_val) + 1):
-                myVal = []
-                myVal.append(str(n))
-                valList.append(myVal)
+            if "Infinity" not in min_val and "Infinity" not in max_val:
+                for n in range(int(min_val), int(max_val) + 1):
+                    myVal = []
+                    myVal.append(str(n))
+                    valList.append(myVal)
         except:
             QMessageBox.critical(
                 None, QApplication.translate("QgsWps", "Error"),

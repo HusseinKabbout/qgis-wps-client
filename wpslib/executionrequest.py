@@ -120,17 +120,20 @@ def createTmpBase64(rLayer):
 #      base64String = outfile.read()
 #      outfile.close()
 #      os.remove(tmpFile.name)
+    if not rLayer:
+        return ''
     if rLayer.dataProvider().name() == 'ogr' or rLayer.dataProvider().name() == 'gdal':
-        infile = open(rLayer.source())
-        outfile = tmpFile  # open(tmpFileName, 'w')
-        base64.encode(infile, outfile)
-        outfile.close()
-        infile.close()
-        outfile = open(tmpFileName, 'r')
-        base64String = outfile.read()
-        outfile.close()
-        os.remove(tmpFileName)
-        return base64String
+        infile = open(rLayer.source(), 'rb')
+        # outfile = tmpFile
+        # base64.encode(infile, outfile)
+        # outfile.close()
+        # infile.close()
+        # outfile = open(tmpFileName, 'r')
+        # base64String = outfile.read()
+        # outfile.close()
+        # os.remove(tmpFileName)
+        base64String = base64.b64encode(infile.read())
+        return base64String.decode('ascii')
     else:
         QMessageBox.critical(
             None, QApplication.translate("QgsWps", 'Error'),
@@ -170,7 +173,7 @@ def createTmpGML(vLayer, processSelection="False", supportedGML="GML2"):
     lco = []
     error = QgsVectorFileWriter.writeAsVectorFormat(
         vLayer, tmpFile, encoding, vLayer.dataProvider().crs(), "GML",
-        processSelected, "", dso, lco)
+        processSelected, dso, lco)
     if error != QgsVectorFileWriter.NoError:
         QMessageBox.information(None, 'Error', 'Process stopped with errors')
     else:
@@ -191,7 +194,7 @@ def createTmpGML(vLayer, processSelection="False", supportedGML="GML2"):
         myFileInfo = myFilePath + '/' + QFileInfo(myFile).completeBaseName()
         QFile(myFileInfo + '.xsd').remove()
         QFile(myFileInfo + '.gml').remove()
-    return gmlString.strip()
+        return gmlString.strip()
 
 
 def getDBEncoding(layerProvider):
@@ -286,6 +289,8 @@ class ExecutionRequest(QObject):
 
     def addGeometryInput(self, identifier, mimeType, schema, encoding, gmldata,
                          useSelected):
+        if not gmldata:
+            return
         # Single raster and vector inputs
         mimeType = htmlescape(mimeType)
         schema = htmlescape(schema)
